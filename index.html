@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 IMEI Info Checker</title>
+    <style>
+        :root {
+            --primary: #ff4500;
+            --dark: #1a1a1a;
+            --light: #f4f4f4;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none; /* Hidden until login */
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .login-header {
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff4500, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-header p {
+            color: #ccc;
+            font-size: 1rem;
+        }
+        
+        .login-input-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ff8c00;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+        
+        .login-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.3);
+        }
+        
+        .login-input::placeholder {
+            color: #aaa;
+            text-align: center;
+        }
+        
+        .login-btn {
+            background: linear-gradient(45deg, #ff4500, #ff8c00);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 69, 0, 0.3);
+        }
+        
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .login-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff4500, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ff8c00;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.3);
+        }
+        
+        input::placeholder {
+            color: #aaa;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff4500, #ff8c00);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 69, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #ff8c00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            word-break: break-word;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--danger);
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #51ed7d;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+            margin-top: 15px;
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .credit {
+            margin-top: 10px;
+            font-weight: 600;
+            color: #ff8c00;
+        }
+        
+        .batch-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            min-height: 120px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        
+        textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .batch-results {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            display: none;
+        }
+        
+        .batch-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .batch-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px auto;
+                padding: 20px;
+            }
+            
+            .login-container {
+                margin: 50px auto;
+                padding: 30px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-header">
+            <h1>🔐 Login Required</h1>
+            <p>Enter your name to access IMEI Checker</p>
+        </div>
+        
+        <div class="login-input-group">
+            <label for="userName">Your Name</label>
+            <input type="text" id="userName" class="login-input" placeholder="Enter your name..." required>
+            <button class="login-btn" id="loginBtn">Login</button>
+        </div>
+        
+        <div class="error" id="loginError" style="margin-top: 10px;"></div>
+        <div class="success" id="loginSuccess" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- Main App (Hidden until login) -->
+    <div class="container" id="mainContainer">
+        <header>
+            <h1>🔥 IMEI Info Checker</h1>
+            <p class="subtitle">Get complete device info in one click</p>
+        </header>
+
+        <div class="input-group">
+            <label for="imei">Enter IMEI Number</label>
+            <input type="text" id="imei" placeholder="Example: 864163068383851" maxlength="15">
+            <button class="btn" id="checkBtn">🔍 Check</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading information...</p>
+        </div>
+
+        <div class="error" id="errorMsg"></div>
+        <div class="success" id="successMsg"></div>
+
+        <div class="result" id="result">
+            <h2>📱 Device Information</h2>
+            <div class="info-grid" id="infoGrid">
+                <!-- Results will be injected here -->
+            </div>
+        </div>
+
+        <div class="batch-section">
+            <h3>📋 Batch IMEI Checker</h3>
+            <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 10px;">
+                Check multiple IMEIs at once (one per line)
+            </p>
+            <textarea id="batchImeis" placeholder="864163068383851&#10;123456789012345&#10;987654321098765"></textarea>
+            <button class="btn" id="batchBtn">🚀 Batch Check</button>
+            
+            <div class="batch-results" id="batchResults">
+                <!-- Batch results will appear here -->
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 IMEI Info Tool | All data from API</p>
+            <p class="credit">
+                👨‍💻 Developer: iNFiNiTY-ERROR | Telegram: @infinityerror2
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Telegram Bot Configuration (REPLACE WITH YOUR ACTUAL VALUES)
+        const BOT_TOKEN = '8265665125:AAEsYFaKhn1hrpQFmFzJRBxg18p7cWEYuTI';  // e.g., '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
+        const CHAT_ID = '5750916504';      // e.g., '123456789' or '@infinityerror2'
+
+        // Login Elements
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const userNameInput = document.getElementById('userName');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+        const loginSuccess = document.getElementById('loginSuccess');
+
+        // Main App Elements
+        const imeiInput = document.getElementById('imei');
+        const checkBtn = document.getElementById('checkBtn');
+        const loading = document.getElementById('loading');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+        const result = document.getElementById('result');
+        const infoGrid = document.getElementById('infoGrid');
+        const batchImeis = document.getElementById('batchImeis');
+        const batchBtn = document.getElementById('batchBtn');
+        const batchResults = document.getElementById('batchResults');
+
+        // API Base URL
+        const API_URL = 'https://lmnx9.appletolha.com/imei/info.php';
+
+        // Show/Hide Login Error/Success
+        function showLoginError(message) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+            loginSuccess.style.display = 'none';
+        }
+
+        function showLoginSuccess(message) {
+            loginSuccess.textContent = message;
+            loginSuccess.style.display = 'block';
+            loginError.style.display = 'none';
+        }
+
+        // Handle Login
+        async function handleLogin() {
+            const name = userNameInput.value.trim();
+            if (!name) {
+                showLoginError('⚠️ Please enter your name');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+
+            try {
+                // Send name to Telegram Bot
+                const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                const message = `New User Login: ${name}\nTime: ${new Date().toLocaleString()}\nFrom: IMEI Checker Tool`;
+                const response = await fetch(telegramUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send to Telegram');
+                }
+
+                showLoginSuccess('✅ Login successful! Redirecting...');
+                setTimeout(() => {
+                    loginContainer.style.display = 'none';
+                    mainContainer.style.display = 'block';
+                    imeiInput.focus();
+                }, 1500);
+
+            } catch (err) {
+                showLoginError('❌ Login failed: ' + err.message + '. Check bot token and chat ID.');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        }
+
+        // Event Listeners for Login
+        loginBtn.addEventListener('click', handleLogin);
+        userNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        // Validate IMEI (15 digits)
+        function isValidIMEI(imei) {
+            return /^\d{15}$/.test(imei.trim());
+        }
+
+        // Clean and format IMEI
+        function cleanIMEI(imei) {
+            return imei.replace(/\D/g, '').slice(0, 15);
+        }
+
+        // Show loading
+        function showLoading() {
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            checkBtn.disabled = true;
+            checkBtn.textContent = 'Loading...';
+        }
+
+        // Hide loading
+        function hideLoading() {
+            loading.style.display = 'none';
+            checkBtn.disabled = false;
+            checkBtn.textContent = '🔍 Check';
+        }
+
+        // Show error
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            hideLoading();
+        }
+
+        // Show success
+        function showSuccess(message) {
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+        }
+
+        // Create info item
+        function createInfoItem(label, value) {
+            if (!value || value === 'N/A') value = 'No information';
+            
+            const item = document.createElement('div');
+            item.className = 'info-item';
+            item.innerHTML = `
+                <div class="info-label">${label}</div>
+                <div class="info-value">${value}</div>
+            `;
+            return item;
+        }
+
+        // Fetch single IMEI info
+        async function fetchIMEIInfo(imei) {
+            try {
+                const response = await fetch(`${API_URL}?imei=${imei}`);
+                if (!response.ok) throw new Error('No data found from API');
+                
+                const data = await response.json();
+                
+                // Override credits
+                data.developer = 'iNFiNiTY-ERROR';
+                data.telegram = '@infinityerror2';
+                
+                return data;
+            } catch (err) {
+                throw new Error(err.message || 'Network issue');
+            }
+        }
+
+        // Display single result
+        function displayResult(data) {
+            if (!data || !data.status) {
+                showError('No information found for this IMEI.');
+                return;
+            }
+
+            const details = data.details || {};
+            
+            infoGrid.innerHTML = '';
+            
+            // Basic info
+            infoGrid.appendChild(createInfoItem('🔥 IMEI', data.imei));
+            infoGrid.appendChild(createInfoItem('📱 Brand', data.brand));
+            infoGrid.appendChild(createInfoItem('📲 Model', data.model));
+            infoGrid.appendChild(createInfoItem('📅 Release Year', details['Relase Year'] || 'N/A'));
+            infoGrid.appendChild(createInfoItem('💻 Chipset', details['Chipset'] || 'N/A'));
+            infoGrid.appendChild(createInfoItem('🖥️ Display', `${details['Display'] || 'N/A'} (${details['Diagonal'] || 'N/A'} inches)`));
+            infoGrid.appendChild(createInfoItem('🔋 Battery', `${details['Capacity'] || 'N/A'} mAh`));
+            infoGrid.appendChild(createInfoItem('📸 Main Camera', `${details['Main'] || 'N/A'} MP`));
+            infoGrid.appendChild(createInfoItem('🌐 Network', '5G/4G/3G/2G Support Available'));
+            infoGrid.appendChild(createInfoItem('👨‍💻 Developer', `${data.developer || 'N/A'} | Telegram: ${data.telegram || 'N/A'}`));
+
+            result.style.display = 'block';
+            showSuccess('✅ Information loaded successfully!');
+            hideLoading();
+        }
+
+        // Check single IMEI
+        async function checkIMEI() {
+            const rawImei = imeiInput.value.trim();
+            const imei = cleanIMEI(rawImei);
+
+            if (!imei) {
+                showError('⚠️ Enter IMEI number');
+                return;
+            }
+
+            if (!isValidIMEI(imei)) {
+                showError('❌ Invalid IMEI! Enter a 15-digit IMEI.');
+                return;
+            }
+
+            showLoading();
+            infoGrid.innerHTML = '';
+            result.style.display = 'none';
+
+            try {
+                const data = await fetchIMEIInfo(imei);
+                displayResult(data);
+            } catch (err) {
+                showError('❌ ' + err.message);
+            }
+        }
+
+        // Batch processing
+        async function processBatch() {
+            const rawText = batchImeis.value.trim();
+            if (!rawText) {
+                showError('⚠️ Enter at least one IMEI for batch');
+                return;
+            }
+
+            const imeis = rawText.split('\n')
+                .map(line => cleanIMEI(line))
+                .filter(imei => imei && isValidIMEI(imei));
+
+            if (imeis.length === 0) {
+                showError('❌ No valid IMEI found');
+                return;
+            }
+
+            batchBtn.disabled = true;
+            batchBtn.textContent = 'Processing...';
+            batchResults.innerHTML = '';
+            batchResults.style.display = 'block';
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < imeis.length; i++) {
+                const imei = imeis[i];
+                const item = document.createElement('div');
+                item.className = 'batch-item';
+                item.innerHTML = `<strong>IMEI: ${imei}</strong><div style="margin-top:8px;" id="res-${i}"><em>Loading...</em></div>`;
+                batchResults.appendChild(item);
+
+                try {
+                    const data = await fetchIMEIInfo(imei);
+                    if (data && data.status) {
+                        successCount++;
+                        const details = data.details || {};
+                        const resDiv = document.getElementById(`res-${i}`);
+                        resDiv.innerHTML = `
+                            <div style="font-size:0.9rem; line-height:1.5;">
+                                <strong style="color:#51ed7d;">✅ Success</strong><br>
+                                📱 ${data.brand} ${data.model}<br>
+                                💻 ${details['Chipset'] || 'N/A'}<br>
+                                🔋 ${details['Capacity'] || 'N/A'} mAh
+                            </div>
+                        `;
+                    } else {
+                        failCount++;
+                        document.getElementById(`res-${i}`).innerHTML = '<span style="color:#ff6b6b;">❌ No information found</span>';
+                    }
+                } catch (err) {
+                    failCount++;
+                    document.getElementById(`res-${i}`).innerHTML = `<span style="color:#ff6b6b;">❌ ${err.message}</span>`;
+                }
+
+                // Small delay to avoid rate limiting
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+
+            batchBtn.disabled = false;
+            batchBtn.textContent = '🚀 Batch Check';
+            
+            const summary = document.createElement('div');
+            summary.style.marginTop = '20px';
+            summary.style.padding = '15px';
+            summary.style.background = 'rgba(255,255,255,0.1)';
+            summary.style.borderRadius = '12px';
+            summary.style.textAlign = 'center';
+            summary.innerHTML = `
+                <strong>📊 Completed!</strong><br>
+                ✅ Success: ${successCount} | ❌ Failed: ${failCount}
+            `;
+            batchResults.appendChild(summary);
+        }
+
+        // Event Listeners for Main App
+        checkBtn.addEventListener('click', checkIMEI);
+        imeiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkIMEI();
+        });
+
+        batchBtn.addEventListener('click', processBatch);
+
+        // Auto-clean input
+        imeiInput.addEventListener('input', function() {
+            this.value = cleanIMEI(this.value);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            userNameInput.focus();
+        });
+    </script>
+</body>
+</html>
